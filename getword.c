@@ -26,12 +26,16 @@ Due Date: 09/21/16*/
 */
 int getword(char *w){
 	/*numletters is the number of chars in current word*/
-	int curchar = 0, numletters = 0;
+	int curchar = 0, numletters = 0, numblanks=0;
 
 	while ( (curchar = getchar()) != EOF ){
 		/*Not processing word, newline entered - null terminate
 		string - return 0*/
-		if( (numletters == 0) && ((char)curchar == NEWLINE) ){
+		if ( (numblanks > 0) && ((char)curchar == NEWLINE) ){
+			*w = '\0';
+			return 0;
+		}
+		else if( (numletters == 0) && ((char)curchar == NEWLINE) ){
 			*w = '\0';
 		}
 		/*Processing word, newline delimeter encountered - 
@@ -68,7 +72,7 @@ int getword(char *w){
 		else{
 			/*leading blank, do not add to string*/
 			if( ((char)curchar == SPACE) && (numletters == 0) ){
-				;
+				numblanks++;
 			}
 			/*curchar not a delimeter - add curchar to string*/
 			else{
