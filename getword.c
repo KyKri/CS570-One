@@ -32,12 +32,22 @@ int getword(char *w){
 		string - return 0*/
 		if( (numletters == 0) && ((char)curchar == NEWLINE) ){
 			*w = '\0';
-			return 0;
 		}
 		/*Processing word, newline delimeter encountered - 
 		return size*/
 		else if( (char)curchar == NEWLINE ){
 			ungetc(NEWLINE, stdin);
+			return numletters;
+		}
+		else if ( (numletters == 0) && (((char)curchar == LSSR) 
+|| ((char)curchar == GRTR) || ((char)curchar == PIPE) || ((char)curchar == AMP)) ){
+			*w++ = curchar;
+			*w = '\0';
+			return 1;
+		}
+		else if ( ((char)curchar == LSSR) 
+|| ((char)curchar == GRTR) || ((char)curchar == PIPE) || ((char)curchar == AMP) ){
+			ungetc(curchar, stdin);
 			return numletters;
 		}
 		/*size > 0 means not leading blank, blank delimeter 
