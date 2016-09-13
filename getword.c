@@ -12,6 +12,7 @@ Due Date: 09/21/16*/
 #define PIPE '|'
 #define DLLR '$'
 #define AMP '&'
+#define BACK '\\'
 
 /* The getword() function gets one word from the input stream.
 * It returns -1 if end-of-file is encountered;
@@ -38,6 +39,13 @@ int getword(char *w){
 		else if( (char)curchar == NEWLINE ){
 			ungetc(NEWLINE, stdin);
 			return numletters;
+		}
+		/* '\' handling*/
+		else if ( (char)curchar == BACK ){
+			curchar = getchar();
+			*w++ = curchar;
+			*w = '\0';
+			numletters++;
 		}
 		/*metachar is a word by itself*/
 		else if ( (numletters == 0) && (((char)curchar == LSSR) 
