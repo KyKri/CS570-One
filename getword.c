@@ -28,9 +28,15 @@ int getword(char *w){
 	int curchar = 0, numletters = 0;
 
 	while ( (curchar = getchar()) != EOF ){
+		/*Not processing word, newline entered - null terminate
+		string - return 0*/
+		if( (numletters == 0) && ((char)curchar == NEWLINE) ){
+			*w = '\0';
+			return 0;
+		}
 		/*Processing word, newline delimeter encountered - 
 		return size*/
-		if( (char)curchar == NEWLINE ){
+		else if( (char)curchar == NEWLINE ){
 			ungetc(NEWLINE, stdin);
 			return numletters;
 		}
