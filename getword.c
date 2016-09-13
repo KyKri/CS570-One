@@ -39,12 +39,14 @@ int getword(char *w){
 			ungetc(NEWLINE, stdin);
 			return numletters;
 		}
+		/*metachar is a word by itself*/
 		else if ( (numletters == 0) && (((char)curchar == LSSR) 
 || ((char)curchar == GRTR) || ((char)curchar == PIPE) || ((char)curchar == AMP)) ){
 			*w++ = curchar;
 			*w = '\0';
 			return 1;
 		}
+		/*metachar delimits a word*/
 		else if ( ((char)curchar == LSSR) 
 || ((char)curchar == GRTR) || ((char)curchar == PIPE) || ((char)curchar == AMP) ){
 			ungetc(curchar, stdin);
