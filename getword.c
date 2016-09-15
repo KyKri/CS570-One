@@ -26,30 +26,39 @@ Due Date: 09/21/16*/
 */
 int getword(char *w){
 	/*numletters is the number of chars in current word*/
-	int curchar = 0, numletters = 0, numblanks=0;
+	int curchar = 0, numletters = 0, numblanks=0, dllrfrst = 0;
 
 	while ( (curchar = getchar()) != EOF ){
 		/*Not processing word, newline entered - null terminate
 		string - return 0*/
-		if ( (numblanks > 0) && ((char)curchar == NEWLINE) ){
+		if( (numletters == 0) && ((char)curchar == NEWLINE) ){
 			*w = '\0';
 			return 0;
-		}
-		else if( (numletters == 0) && ((char)curchar == NEWLINE) ){
-			*w = '\0';
 		}
 		/*Processing word, newline delimeter encountered - 
 		return size*/
 		else if( (char)curchar == NEWLINE ){
-			ungetc(NEWLINE, stdin);
+			ungetc(NEWLINE , stdin);
 			return numletters;
 		}
 		/* '\' handling*/
 		else if ( (char)curchar == BACK ){
 			curchar = getchar();
-			*w++ = curchar;
-			*w = '\0';
-			numletters++;
+			if( (char)curchar == EOF){
+				ungetc(EOF , stdin);
+			}
+			else if ( (char)curchar == NEWLINE ){
+				ungetc(NEWLINE , stdin);
+			}
+			else if (numletters == STORAGE-1){
+				ungetc(curchar, stdin);
+				return numletters;
+			}
+			else{
+				*w++ = curchar;
+				*w = '\0';
+				numletters++;
+			}
 		}
 		/*metachar is a word by itself*/
 		else if ( (numletters == 0) && (((char)curchar == LSSR) 
@@ -61,7 +70,7 @@ int getword(char *w){
 		/*metachar delimits a word*/
 		else if ( ((char)curchar == LSSR) 
 || ((char)curchar == GRTR) || ((char)curchar == PIPE) || ((char)curchar == AMP) ){
-			ungetc(curchar, stdin);
+			ungetc(curchar , stdin);
 			return numletters;
 		}
 		/*size > 0 means not leading blank, blank delimeter 
@@ -72,10 +81,14 @@ int getword(char *w){
 		else{
 			/*leading blank, do not add to string*/
 			if( ((char)curchar == SPACE) && (numletters == 0) ){
-				numblanks++;
+				;
+			}else if (numletters == STORAGE-1){
+				ungetc(curchar, stdin);
+				return numletters;
 			}
 			/*curchar not a delimeter - add curchar to string*/
 			else{
+
 				*w++ = curchar;
 				*w = '\0';
 				numletters++;				
@@ -85,6 +98,13 @@ int getword(char *w){
 
 	/*EOF encountered, null terminate string at beginning of 
 	current word - return -1*/
-	*(w - numletters) = '\0';
-	return -1;
+	if((char)curchar == EOF){
+		if ( numletters > 0 ){
+			ungetc(EOF , stdin);
+			return numletters;
+		}else{
+			*(w - numletters) = '\0';
+			return -1;
+		}
+	}
 }
