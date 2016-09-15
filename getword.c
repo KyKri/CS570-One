@@ -26,6 +26,8 @@ Due Date: 09/21/16*/
 */
 int getword(char *w){
 	/*numletters is the number of chars in current word*/
+	/*dllrfrst is set when DLLR is read, every return numletter
+	checks to see if dllrfrst is set, if it is, negate numletters*/
 	int curchar = 0, numletters = 0, dllrfrst = 0;
 
 	while ( (curchar = getchar()) != EOF ){
@@ -58,6 +60,8 @@ int getword(char *w){
 			size constraints*/
 			else if (numletters == STORAGE-1){
 				ungetc(curchar, stdin);
+				if( dllrfrst )
+					numletters = numletters * -1;
 				return numletters;
 			}
 			else{
@@ -80,11 +84,15 @@ int getword(char *w){
 		else if ( ((char)curchar == LSSR) 
 || ((char)curchar == GRTR) || ((char)curchar == PIPE) || ((char)curchar == AMP) ){
 			ungetc(curchar , stdin);
+			if( dllrfrst )
+				numletters = numletters * -1;
 			return numletters;
 		}
 		/*size > 0 means not leading blank, blank delimeter 
 		encountered - return size*/
 		else if( ((char)curchar == SPACE) && (numletters > 0) ){
+			if( dllrfrst )
+				numletters = numletters * -1;
 			return numletters;
 		}
 		else{
@@ -96,6 +104,8 @@ int getword(char *w){
 			then put the char back and return the current word*/
 			else if (numletters == STORAGE-1){
 				ungetc(curchar, stdin);
+				if( dllrfrst )
+					numletters = numletters * -1;
 				return numletters;
 			}
 			/*curchar not a delimeter - add curchar to string*/
@@ -110,11 +120,13 @@ int getword(char *w){
 		}
 	}/*while*/
 
-	/*EOF encountered, null terminate string at beginning of 
-	current word - return -1*/
+	/*EOF encountered, if in middle of word return the word, put EOF
+	back so that we immediately quit upon the next call*/
 	if((char)curchar == EOF){
 		if ( numletters > 0 ){
 			ungetc(EOF , stdin);
+			if( dllrfrst )
+				numletters = numletters * -1;
 			return numletters;
 		}else{
 			*(w - numletters) = '\0';
