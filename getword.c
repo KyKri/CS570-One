@@ -26,7 +26,7 @@ Due Date: 09/21/16*/
 */
 int getword(char *w){
 	/*numletters is the number of chars in current word*/
-	int curchar = 0, numletters = 0, numblanks=0, dllrfrst = 0;
+	int curchar = 0, numletters = 0, dllrfrst = 0;
 
 	while ( (curchar = getchar()) != EOF ){
 		/*Not processing word, newline entered - null terminate
@@ -39,22 +39,31 @@ int getword(char *w){
 		return size*/
 		else if( (char)curchar == NEWLINE ){
 			ungetc(NEWLINE , stdin);
+			if( dllrfrst )
+				numletters = numletters * -1;
 			return numletters;
 		}
 		/* '\' handling*/
 		else if ( (char)curchar == BACK ){
 			curchar = getchar();
+			/*We simply ungetc because we already have code to handle EOF*/
 			if( (char)curchar == EOF){
 				ungetc(EOF , stdin);
 			}
+			/*We simply ungetc because we already have code to handle NEWLINE*/
 			else if ( (char)curchar == NEWLINE ){
 				ungetc(NEWLINE , stdin);
 			}
+			/*Checks to make sure the char after the BACK isn't going over
+			size constraints*/
 			else if (numletters == STORAGE-1){
 				ungetc(curchar, stdin);
 				return numletters;
 			}
 			else{
+				if( (numletters == 0) && ((char)curchar == DLLR) ){
+					dllrfrst=1;
+				}
 				*w++ = curchar;
 				*w = '\0';
 				numletters++;
@@ -82,13 +91,18 @@ int getword(char *w){
 			/*leading blank, do not add to string*/
 			if( ((char)curchar == SPACE) && (numletters == 0) ){
 				;
-			}else if (numletters == STORAGE-1){
+			}
+			/*Make sure we dont go over the size constraint if we do,
+			then put the char back and return the current word*/
+			else if (numletters == STORAGE-1){
 				ungetc(curchar, stdin);
 				return numletters;
 			}
 			/*curchar not a delimeter - add curchar to string*/
 			else{
-
+				if( (numletters == 0) && ((char)curchar == DLLR) ){
+					dllrfrst=1;
+				}
 				*w++ = curchar;
 				*w = '\0';
 				numletters++;				
