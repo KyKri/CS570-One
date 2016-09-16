@@ -124,12 +124,11 @@ int getword(char *w){
 	back so that we immediately quit upon the next call*/
 	if((char)curchar == EOF){
 		if ( numletters > 0 ){
-			ungetc(EOF , stdin);
 			if( dllrfrst )
 				numletters = numletters * -1;
 			return numletters;
 		}else{
-			*(w - numletters) = '\0';
+			*w++ = '\0';
 			return -1;
 		}
 	}
