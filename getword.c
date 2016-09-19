@@ -65,9 +65,6 @@ int getword(char *w){
 				return numletters;
 			}
 			else{
-				if( (numletters == 0) && ((char)curchar == DLLR) ){
-					dllrfrst=1;
-				}
 				*w++ = curchar;
 				*w = '\0';
 				numletters++;
